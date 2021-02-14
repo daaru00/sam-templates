@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  RequiredParam:
+    Type: String
+    Description: "This is a required parameter"
+  OptionalParam:
+    Type: String 
+    Description: "This is an optional parameter with a default value"
+    Default: "default-value"
+  SecretParam:
+    Type: String
+    Description: "This is a secret parameter"
+    NoEcho: true
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Timeout: 6
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+  
+  SecretSsmParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: !Ref SecretParam
+
+  AuthorizationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-my-function"
+      Handler: lambda.handler
+      Environment:
+        Variables:
+          SECRET_SSM_PARAMETER: !Ref SecretSsmParameter
+          REQUIRED_PARAM: !Ref RequiredParam
+          OPTIONAL_PARAM: !Ref OptionalParam
+
+# Template Outputs
+
+Outputs:
+  LambdaArn:
+    Description: "The created lambda ARN"
+    Value: !GetAtt AuthorizationFunction.Arn
+
+
