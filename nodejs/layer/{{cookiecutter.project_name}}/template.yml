@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+
+  DependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "${AWS::StackName}-dependencies"
+      ContentUri: ./layers/common
+      CompatibleRuntimes:
+        - nodejs12.x
+      LicenseInfo: 'MIT'
+    Metadata:
+      BuildMethod: nodejs12.x
+
+  ExampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-my-function"
+      Handler: hello.handler
+      Layers:
+        - !Ref DependenciesLayer
+
+# Template Outputs
+
+Outputs:
+  LambdaArn:
+    Description: "The created lambda ARN"
+    Value: !GetAtt ExampleFunction.Arn
+
+

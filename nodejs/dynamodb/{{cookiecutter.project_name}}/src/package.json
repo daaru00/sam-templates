@@ -1,0 +1,8 @@
+{
+  "name": "sam",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "uuid": "^8.3.2"
+  }
+}

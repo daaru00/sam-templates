@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Parameters
+
+Parameters:
+  VisibilityTimeout:
+    Type: Number
+    Description: "The queue message visibility timeout"
+    Default: {{cookiecutter.visibility_timeout}}
+  MessageRetentionPeriod:
+    Type: Number
+    Description: "The queue message retention period"
+    Default: {{cookiecutter.message_retention_period}}
+  BatchSize:
+    Type: Number
+    Description: "The number of queue message processed in parallels"
+    Default: {{cookiecutter.batch_size}}
+
+# Template Resources
+
+Resources:
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref AWS::StackName
+      VisibilityTimeout: !Ref VisibilityTimeout
+      MessageRetentionPeriod: !Ref MessageRetentionPeriod
+
+  WorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-worker"
+      Handler: queue/worker.handler
+      Events:
+        QueueConsumer:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt JobQueue.Arn
+            BatchSize: !Ref BatchSize
+
+# Template Outputs
+
+Outputs:
+  QueueName:
+    Description: "The queue name"
+    Value: !GetAtt Queue.QueueName
+  QueueUrl:
+    Description: "The queue url"
+    Value: !Ref Queue
+
+

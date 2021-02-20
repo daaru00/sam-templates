@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    CodeUri: src/
+
+# Template Parameters
+
+Parameters:
+  VisibilityTimeout:
+    Type: Number
+    Description: "The queue message visibility timeout"
+    Default: {{cookiecutter.visibility_timeout}}
+  MessageRetentionPeriod:
+    Type: Number
+    Description: "The queue message retention period"
+    Default: {{cookiecutter.message_retention_period}}
+  BatchSize:
+    Type: Number
+    Description: "The number of queue message processed in parallels"
+    Default: {{cookiecutter.batch_size}}
+  EventBusName:
+    Type: String
+    Description: "The event bus name where event are sent to"
+    Default: "{{cookiecutter.event_bus}}"
+  PdfFileExpiration:
+    Type: Number
+    Description: "The number of day after PDF file will be deleted"
+    Default: {{cookiecutter.pdf_file_expiration}}
+  PdfFileDownloadLinkExpiration:
+    Type: Number
+    Description: "The number of seconds after PDF file download link will expires"
+    Default: {{cookiecutter.pdf_file_download_link_expiration}}
+
+# Template Resources
+
+Resources:
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref AWS::StackName
+      VisibilityTimeout: !Ref VisibilityTimeout
+      MessageRetentionPeriod: !Ref MessageRetentionPeriod
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${AWS::StackName}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: delete-after-six-months
+            ExpirationInDays: !Ref PdfFileExpiration
+            Status: Enabled
+  
+  PuppeteerLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "${AWS::StackName}-puppeteer"
+      ContentUri: ./layers/puppeteer
+      CompatibleRuntimes:
+        - nodejs12.x
+      LicenseInfo: 'MIT'
+    Metadata:
+      BuildMethod: nodejs12.x
+
+  GeneratePdfWorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-worker"
+      Handler: queue/generate.handler
+      Environment:
+        Variables:
+          EVENT_BUS_NAME: !Ref EventBusName
+          EVENT_SOURCE_NAME: !Ref AWS::StackName
+          BUCKET_NAME: !Ref Bucket
+          DOWNLOAD_LINK_EXPIRES: !Ref PdfFileDownloadLinkExpiration
+      MemorySize: {{cookiecutter.memory_size}}
+      Timeout: {{cookiecutter.timeout}}
+      Policies:
+        - EventBridgePutEventsPolicy:
+            EventBusName: !Ref EventBusName
+        - Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetSignedUrl
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${Bucket}/*"
+      Layers:
+        - !Ref PuppeteerLayer
+      Events:
+        ProductSaveQueueConsumer:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt Queue.Arn
+            BatchSize: !Ref BatchSize
+
+# Template Outputs
+
+Outputs:
+  QueueName:
+    Description: "The queue name"
+    Value: !GetAtt Queue.QueueName
+  BucketName:
+    Description: "The name of bucket where PDF are uploaded"
+    Value: !Ref Bucket
+

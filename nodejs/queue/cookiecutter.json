@@ -1,0 +1,11 @@
+{
+  "project_name": "my-app",
+  "project_description": "My Serverless application description",
+  "runtime": "nodejs12.x",
+  "timeout": 6,
+  "default_region": "eu-west-1",
+  "default_profile": "personal",
+  "visibility_timeout": 60,
+  "message_retention_period": 1800,
+  "batch_size": 10
+}

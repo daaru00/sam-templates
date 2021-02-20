@@ -1,0 +1,60 @@
+openapi: "3.0.2"
+info:
+  title: "Example API"
+  version: 1.0.0
+
+paths:
+  /hello:
+    get:
+      operationId: hello
+      parameters:
+        - in: query
+          name: name
+          description: The name to say hello to
+          schema:
+            type: string
+          required: false
+      x-amazon-apigateway-integration:
+        httpMethod: "POST"
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloFunction.Arn}/invocations"
+      responses:
+        200:
+          description: Return greetings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Greetings"
+        400:
+          description: Return error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        default:
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+components:
+  schemas:
+    Greetings:
+      type: object
+      properties:
+        message:
+          type: string
+    
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: all

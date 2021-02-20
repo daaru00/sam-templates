@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub "${AWS::StackName}-table"
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+
+  ProcessTableChanges:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-table-changes"
+      Handler: functions/stream/table.handler
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt Table.StreamArn
+            BatchSize: 10
+            StartingPosition: TRIM_HORIZON
+
+# Template Outputs
+
+Outputs:
+  TableName:
+    Description: "The table name"
+    Value: !Ref Table
+  TableStreamArn:
+    Description: "The table changes stream ARN"
+    Value: !GetAtt Table.StreamArn
+  LambdaArn:
+    Description: "The stream worker lambda ARN"
+    Value: !GetAtt ProcessTableChanges.Arn
+
+

@@ -4,5 +4,5 @@
  * @param {object} event 
  */
 exports.handler = async function(event) {
-  return event
+	return event
 }

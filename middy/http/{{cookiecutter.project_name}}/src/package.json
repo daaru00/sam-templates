@@ -1,0 +1,11 @@
+{
+  "name": "sam",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@middy/http-error-handler": "^1.5.2",
+    "@middy/http-header-normalizer": "^1.5.2",
+    "@middy/http-json-body-parser": "^1.5.2",
+    "http-errors": "^1.8.0"
+  }
+}

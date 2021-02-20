@@ -1,0 +1,10 @@
+{
+  "name": "sam",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "chrome-aws-lambda": "^7.0.0",
+    "eslint": "^7.20.0",
+    "puppeteer-core": "^7.1.0"
+  }
+}

@@ -4,5 +4,8 @@
  * @param {object} event 
  */
 exports.handler = async function(event) {
-  return event
+  return {
+    statusCode: 200,
+    body: "Lambda@Edge is awesome!",
+  }
 }

@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+
+  Table: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub "${AWS::StackName}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "range_id"
+          AttributeType: "S"
+        - AttributeName: "secondary_attribute"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "range_id"
+          KeyType: "RANGE"
+      GlobalSecondaryIndexes:
+        - IndexName: "BY_ID"
+          KeySchema:
+            - AttributeName: "id"
+              KeyType: "HASH"
+            - AttributeName: "secondary_attribute"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: "ALL"
+
+  InsertRecordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-insert"
+      Handler: operations/insert.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Table
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref Table
+
+  QueryRecordsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-query"
+      Handler: operations/query.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref Table
+
+  DeleteRecordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-delete"
+      Handler: operations/delete.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Table
+
+# Template Outputs
+
+Outputs:
+  TableName:
+    Description: "The table name"
+    Value: !Ref Table
+
+

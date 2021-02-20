@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  SftpUsername:
+    Type: String
+    Description: "The SFTP username"
+    Default: "{{cookiecutter.sftp_username}}"
+
+# Template Resources
+
+Resources:
+  
+  ImportBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "${AWS::StackName}{{cookiecutter.bucket_suffix}}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+  TransferServer:
+    Type: AWS::Transfer::Server
+    Properties:
+      EndpointType: PUBLIC
+      Protocols: 
+        - SFTP
+      SecurityPolicyName: TransferSecurityPolicy-2020-06
+
+  SFTPUserRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - transfer.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: S3FullAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+                  - s3:GetBucketLocation
+                Resource: "*"
+        - PolicyName: AllowListingOfUserFolder
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !GetAtt ImportBucket.Arn
+        - PolicyName: ObjectAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:DeleteObject
+                  - s3:DeleteObjectVersion
+                Resource: !Sub "${ImportBucket.Arn}/*"
+
+  TransferUser:
+    Type: 'AWS::Transfer::User'
+    Properties:
+      Role: !GetAtt SFTPUserRole.Arn
+      ServerId: !GetAtt TransferServer.ServerId
+      HomeDirectory: !Sub "/${ImportBucket}/"
+      UserName: !Ref SftpUsername
+
+# Template Outputs
+
+Outputs:
+  TransferServerEndpoint:
+    Description: "The SFTP server endpoint"
+    Value: !Sub "${TransferServer.ServerId}.server.transfer.${AWS::Region}.amazonaws.com"
+
+

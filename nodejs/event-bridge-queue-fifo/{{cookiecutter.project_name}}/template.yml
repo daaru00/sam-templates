@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Parameters
+
+Parameters:
+  EventBusName:
+    Type: String
+    Description: "The name of EventBridge bus"
+    Default: "{{cookiecutter.event_bus}}"
+  VisibilityTimeout:
+    Type: Number
+    Description: "The queue message visibility timeout"
+    Default: {{cookiecutter.visibility_timeout}}
+  MessageRetentionPeriod:
+    Type: Number
+    Description: "The queue message retention period"
+    Default: {{cookiecutter.message_retention_period}}
+
+# Template Resources
+
+Resources:
+
+  EventBridgeSQSPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref Queue
+      PolicyDocument:
+        Statement:
+        - Action:
+            - SQS:SendMessage
+          Effect: Allow
+          Principal:
+            Service:
+              - events.amazonaws.com
+          Resource:
+            - !GetAtt Queue.Arn
+
+  EventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: !Ref AWS::StackName
+      EventBusName: !Ref EventBusName
+      EventPattern:
+        source:
+          - !Ref AWS::StackName
+      Targets:
+        - Id: !Sub "${AWS::StackName}-queue-target"
+          Arn: !GetAtt CheckOrderQueue.Arn
+          SqsParameters:
+            MessageGroupId: 'group'
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref AWS::StackName
+      VisibilityTimeout: !Ref VisibilityTimeout
+      MessageRetentionPeriod: !Ref MessageRetentionPeriod
+      FifoQueue: true
+      ContentBasedDeduplication: true
+
+  WorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-worker"
+      Handler: queue/worker.handler
+      Events:
+        QueueConsumer:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt JobQueue.Arn
+            BatchSize: 1
+
+# Template Outputs
+
+Outputs:
+  QueueName:
+    Description: "The queue name"
+    Value: !GetAtt Queue.QueueName
+  QueueUrl:
+    Description: "The queue url"
+    Value: !Ref Queue
+
+

@@ -1,0 +1,10 @@
+{
+  "project_name": "my-app",
+  "project_description": "My Serverless application description",
+  "runtime": "nodejs12.x",
+  "default_region": "eu-west-1",
+  "default_profile": "personal",
+  "origin_domain": "aws.amazon.com",
+  "origin_protocol_policy": "match-viewer",
+  "origin_protocol_port": 443
+}

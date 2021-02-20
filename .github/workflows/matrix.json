@@ -1,0 +1,67 @@
+
+[
+  {
+    "name": "middy",
+    "path": "./middy/base"
+  },
+  {
+    "name": "middy-http",
+    "path": "./middy/http"
+  },
+  {
+    "name": "middy-validation",
+    "path": "./middy/validation"
+  },
+  {
+    "name": "nodejs",
+    "path": "./nodejs/base"
+  },
+  {
+    "name": "nodejs-event-bridge-queue-fifo",
+    "path": "./nodejs/event-bridge-queue-fifo"
+  },
+  {
+    "name": "nodejs-http",
+    "path": "./nodejs/http"
+  },
+  {
+    "name": "nodejs-layer",
+    "path": "./nodejs/layer"
+  },
+  {
+    "name": "nodejs-queue",
+    "path": "./nodejs/queue"
+  },
+  {
+    "name": "nodejs-queue-dead-letter",
+    "path": "./nodejs/queue-dead-letter"
+  },
+  {
+    "name": "nodejs-queue-fifo",
+    "path": "./nodejs/queue-fifo"
+  },
+  {
+    "name": "nodejs-queue-pdf-generator",
+    "path": "./nodejs/queue-pdf-generator"
+  },
+  {
+    "name": "nodejs-edge",
+    "path": "./nodejs/edge"
+  },
+  {
+    "name": "nodejs-dynamodb",
+    "path": "./nodejs/dynamodb"
+  },
+  {
+    "name": "nodejs-dynamodb-stream",
+    "path": "./nodejs/dynamodb-stream"
+  },
+  {
+    "name": "s3-sftp-access",
+    "path": "./s3/sftp-access"
+  },
+  {
+    "name": "s3-website",
+    "path": "./s3/website"
+  }
+]

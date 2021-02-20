@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  IndexDocument:
+    Type: String
+    Description: "The index document"
+    Default: "{{cookiecutter.index_document}}"
+  ErrorDocument:
+    Type: String
+    Description: "The error document"
+    Default: "{{cookiecutter.error_document}}"
+  CloudFrontPriceClass:
+    Type: String
+    Description: "The price class for CloudFront distribution"
+    Default: "{{cookiecutter.cloudfront_price_class}}"
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+
+# Template Resources
+
+Resources:
+  
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}"
+      AccessControl: "PublicRead"
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: 
+        Ref: "Bucket"
+      PolicyDocument: 
+        Statement: 
+          - Action: 
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource: 
+              !Sub "arn:aws:s3:::${Bucket}/*"
+            Principal: "*"
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: 
+            !Sub "${Bucket}.s3-website-${AWS::Region}.amazonaws.com"
+          Id: websiteOrigin
+          CustomOriginConfig: 
+            OriginProtocolPolicy: "http-only"
+        Enabled: 'true'
+        Comment: !Ref AWS::StackName
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          Compress: 'true'
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          TargetOriginId: websiteOrigin
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: !Ref CloudFrontPriceClass
+
+# Template Outputs
+
+Outputs:
+  S3Bucket:
+    Description: "The S3 bucket where HTML files need to be uploaded"
+    Value: !Sub "s3://${Bucket}/"
+  CloudFrontDistribution:
+    Description: "The CloudFront distribution in front of the S3 bucket"
+    Value: !Ref Distribution
+  WebsiteUrl:
+    Description: "The website URL"
+    Value: !Sub "https://${Distribution.DomainName}/"
+
+

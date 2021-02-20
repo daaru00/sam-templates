@@ -1,0 +1,9 @@
+{
+  "name": "sam",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@middy/core": "^1.5.2",
+    "@middy/input-output-logger": "^1.5.2"
+  }
+}

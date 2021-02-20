@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  OriginDomainName:
+    Type: String
+    Description: "The default name to say hello to"
+    Default: "{{cookiecutter.origin_domain}}"
+  OriginProtocolPolicy:
+    Type: String
+    Description: "The origin protocol policy"
+    Default: "{{cookiecutter.origin_protocol_policy}}"
+    AllowedValues:
+      - "http-only"
+      - "match-viewer"
+  OriginHttpPort:
+    Type: Number
+    Description: "The origin http port"
+    Default: {{cookiecutter.origin_protocol_port}}
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: 'true'
+        Comment: !Ref AWS::StackName
+        Aliases:
+          - !FindInMap [AliasMap, !Ref Stage, Alias]
+        Origins:
+          - Id: websiteOrigin
+            DomainName: !Ref OriginDomainName
+            CustomOriginConfig:
+              HTTPPort: 80
+              OriginProtocolPolicy: http-only
+        DefaultCacheBehavior:
+          TargetOriginId: websiteOrigin
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              LambdaFunctionARN: !Ref LambdaEdgeFunction.Version
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+
+  LambdaEdgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt LambdaEdgeFunctionRole.Arn
+      Handler: events/originRequest.handler
+      Timeout: 5
+      AutoPublishAlias: live 
+
+  LambdaEdgeFunctionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+        Path: "/"
+        ManagedPolicyArns:
+          - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "AllowLambdaServiceToAssumeRole"
+              Effect: "Allow"
+              Action: 
+                - "sts:AssumeRole"
+              Principal:
+                Service: 
+                  - "lambda.amazonaws.com"
+                  - "edgelambda.amazonaws.com"
+
+# Template Outputs
+
+Outputs:
+  CloudFrontDistribution:
+    Description: "The CloudFront distribution in front of the S3 bucket"
+    Value: !Ref Distribution
+  WebsiteUrl:
+    Description: "The website URL"
+    Value: !Sub "https://${Distribution.DomainName}/"
+
+
