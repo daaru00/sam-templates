@@ -37,7 +37,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template for NodeJS project, more information at [template readme](nodejs/base/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-http.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs.zip
 ```
 
 ### HTTP API
