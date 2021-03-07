@@ -120,6 +120,14 @@ A NodeJS project for DynamoDB stream, more information at [template readme](node
 sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-dynamodb-stream.zip
 ```
 
+### StepFunction Step
+
+A NodeJS project with StepFunction custom steps, more information at [template readme](nodejs/stepfunction/README.md)
+
+```bash
+sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-stepfunction.zip
+```
+
 ---
 
 ## S3
@@ -138,4 +146,12 @@ A base template for static website, more information at [template readme](s3/web
 
 ```bash
 sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/s3-website.zip
+```
+
+## StepFunction
+
+A base template for StepFunction, more information at [template readme](stepfunction/base/README.md)
+
+```bash
+sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/stepfunction.zip
 ```

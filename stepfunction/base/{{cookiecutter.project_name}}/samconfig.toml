@@ -1,0 +1,25 @@
+version = 0.1
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "{{cookiecutter.project_name}}-dev"
+region = "{{cookiecutter.default_region}}"
+profile = "{{cookiecutter.default_profile}}"
+capabilities = "CAPABILITY_IAM"
+
+[stage]
+[stage.deploy]
+[stage.deploy.parameters]
+stack_name = "{{cookiecutter.project_name}}-stage"
+region = "{{cookiecutter.default_region}}"
+profile = "{{cookiecutter.default_profile}}"
+capabilities = "CAPABILITY_IAM"
+
+[prod]
+[prod.deploy]
+[prod.deploy.parameters]
+stack_name = "{{cookiecutter.project_name}}-prod"
+region = "{{cookiecutter.default_region}}"
+profile = "{{cookiecutter.default_profile}}"
+capabilities = "CAPABILITY_IAM"

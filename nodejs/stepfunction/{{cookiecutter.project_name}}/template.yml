@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  WorkFlowName:
+    Type: String
+    Description: "The workflow name"
+    Default: "{{cookiecutter.stepfunction_name}}"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Runtime: "{{cookiecutter.runtime}}"
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: src/
+
+# Template Resources
+
+Resources:
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-hello"
+      Handler: steps/hello.handler
+
+  MyWorkflowStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Ref WorkFlowName
+      DefinitionUri: states/workflow.asl.json
+      DefinitionSubstitutions:
+        MyParameter: "Hello world!"
+        HelloFunctionArn: !GetAtt HelloFunction.Arn
+  
+
+# Template Outputs
+
+Outputs:
+  StepFunctionArn:
+    Description: "The StepFunction ARN"
+    Value: !Ref MyWorkflowStateMachine
+
+

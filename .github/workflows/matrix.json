@@ -57,11 +57,19 @@
     "path": "./nodejs/dynamodb-stream"
   },
   {
+    "name": "nodejs-stepfunction",
+    "path": "./nodejs/stepfunction"
+  },
+  {
     "name": "s3-sftp-access",
     "path": "./s3/sftp-access"
   },
   {
     "name": "s3-website",
     "path": "./s3/website"
+  },
+  {
+    "name": "stepfunction",
+    "path": "./stepfunction/base"
   }
 ]

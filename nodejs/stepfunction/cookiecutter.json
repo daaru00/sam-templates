@@ -1,0 +1,9 @@
+{
+  "project_name": "my-app",
+  "project_description": "My Serverless application description",
+  "runtime": "nodejs12.x",
+  "timeout": 6,
+  "default_region": "eu-west-1",
+  "default_profile": "personal",
+  "stepfunction_name": "MyWorkflow"
+}
