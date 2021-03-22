@@ -39,6 +39,9 @@ Resources:
       DefinitionSubstitutions:
         MyParameter: "Hello world!"
         HelloFunctionArn: !GetAtt HelloFunction.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref HelloFunction
   
 
 # Template Outputs
