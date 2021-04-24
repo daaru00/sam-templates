@@ -1,0 +1,55 @@
+name: Update latest templates zip
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.latest_release_info.outputs.upload_url }}
+    steps:
+      - name: Gets latest created release info
+        id: latest_release_info
+        uses: jossef/action-latest-release-info@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.json }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      
+      - id: matrix
+        name: Load matrix config
+        run: |
+          JSON=$(echo $(cat .github/workflows/matrix.json) | sed 's/ //g' )
+          echo "::set-output name=json::$JSON"
+
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        config: ${{fromJson(needs.config.outputs.matrix)}}
+    needs: [release, config]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Create zip artifacts
+      run: zip -r ${{ matrix.config.name }}.zip ${{ matrix.config.path }}
+
+    - name: Upload zip artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: ${{ matrix.config.name }}.zip
+        asset_name: ${{ matrix.config.name }}.zip
+        asset_content_type: application/zip
