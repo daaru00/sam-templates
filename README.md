@@ -9,7 +9,7 @@ This repository is a collection of AWS SAM templates. All templates are automati
 A base template using [middy](https://github.com/middyjs/middy) library, more information at [template readme](middy/base/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/middy.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/middy.zip
 ```
 
 ### HTTP API
@@ -17,7 +17,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template using [middy](https://github.com/middyjs/middy) library, more information at [template readme](middy/http/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/middy-http.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/middy-http.zip
 ```
 
 ### Input validation
@@ -25,7 +25,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template using [middy](https://github.com/middyjs/middy) library, more information at [template readme](middy/validation/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/middy-validation.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/middy-validation.zip
 ```
 
 ---
@@ -37,7 +37,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template for NodeJS project, more information at [template readme](nodejs/base/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs.zip
 ```
 
 ### HTTP API
@@ -45,7 +45,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for HTTP API, more information at [template readme](nodejs/http/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-http.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-http.zip
 ```
 
 ### Dependencies Layer
@@ -53,7 +53,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project using dependencies layer, more information at [template readme](nodejs/layer/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-layer.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-layer.zip
 ```
 
 ### Queue
@@ -61,7 +61,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for queue worker, more information at [template readme](nodejs/queue/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-queue.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-queue.zip
 ```
 
 ### Queue with Dead Letter
@@ -69,7 +69,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for queue worker with Dead Letter queue, more information at [template readme](nodejs/queue-dead-letter/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-queue-dead-letter.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-queue-dead-letter.zip
 ```
 
 ### Event Bridge events to FIFO Queue
@@ -77,7 +77,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 NodeJS Event Bridge events to FIFO Queue template, more information at [template readme](nodejs/event-bridge-queue-fifo/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-event-bridge-queue-fifo.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-event-bridge-queue-fifo.zip
 ```
 
 ### FIFO Queue
@@ -85,7 +85,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for FIFO queue worker, more information at [template readme](nodejs/queue-fifo/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-queue-fifo.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-queue-fifo.zip
 ```
 
 ### PDF Generator Queue
@@ -93,7 +93,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for PDF generation using queue worker, more information at [template readme](nodejs/queue-pdf-generator/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-queue-pdf-generator.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-queue-pdf-generator.zip
 ```
 
 ### Lambda@Edge
@@ -101,7 +101,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for Lambda@Edge, more information at [template readme](nodejs/edge/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-edge.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-edge.zip
 ```
 
 ### DynamoDB Table
@@ -109,7 +109,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for DynamoDB table, more information at [template readme](nodejs/dynamodb/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-dynamodb.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-dynamodb.zip
 ```
 
 ### DynamoDB Table Stream
@@ -117,7 +117,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project for DynamoDB stream, more information at [template readme](nodejs/dynamodb-stream/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-dynamodb-stream.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-dynamodb-stream.zip
 ```
 
 ### StepFunction Step
@@ -125,7 +125,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A NodeJS project with StepFunction custom steps, more information at [template readme](nodejs/stepfunction/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/nodejs-stepfunction.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nodejs-stepfunction.zip
 ```
 
 ---
@@ -137,7 +137,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template for S3 bucket with SFTP access, more information at [template readme](s3/sftp-access/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/s3-sftp-access.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/s3-sftp-access.zip
 ```
 
 ### Website
@@ -145,7 +145,7 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template for static website, more information at [template readme](s3/website/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/s3-website.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/s3-website.zip
 ```
 
 ## StepFunction
@@ -153,5 +153,5 @@ sam init --location https://github.com/daaru00/sam-templates/releases/download/1
 A base template for StepFunction, more information at [template readme](stepfunction/base/README.md)
 
 ```bash
-sam init --location https://github.com/daaru00/sam-templates/releases/download/1.0.0/stepfunction.zip
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/stepfunction.zip
 ```
