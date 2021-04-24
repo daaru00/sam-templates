@@ -47,6 +47,8 @@ jobs:
 
     - name: Delete existing artifact
       uses: flcdrg/remove-release-asset-action@v1.0.5
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         release_id: ${{ needs.release.outputs.id }}
         asset_name: ${{ matrix.config.name }}.zip
