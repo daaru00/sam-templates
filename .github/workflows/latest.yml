@@ -9,6 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
+      id: ${{ steps.latest_release_info.outputs.id }}
       upload_url: ${{ steps.latest_release_info.outputs.upload_url }}
     steps:
       - name: Gets latest created release info
@@ -43,6 +44,12 @@ jobs:
 
     - name: Create zip artifacts
       run: zip -r ${{ matrix.config.name }}.zip ${{ matrix.config.path }}
+
+    - name: Delete existing artifact
+      uses: flcdrg/remove-release-asset-action@v1.0.5
+      with:
+        release_id: ${{ needs.release.outputs.id }}
+        name: ${{ matrix.config.name }}.zip
 
     - name: Upload zip artifact
       uses: actions/upload-release-asset@v1
