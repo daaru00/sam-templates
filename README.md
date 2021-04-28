@@ -155,3 +155,11 @@ A base template for StepFunction, more information at [template readme](stepfunc
 ```bash
 sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/stepfunction.zip
 ```
+
+## Nested Stacks
+
+A base template for nested stacks, more information at [template readme](nested/base/README.md)
+
+```bash
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nested.zip
+```

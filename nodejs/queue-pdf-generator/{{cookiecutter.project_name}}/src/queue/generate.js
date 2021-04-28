@@ -1,5 +1,4 @@
 const chromium = require('chrome-aws-lambda')
-const { v4: uuid } = require('uuid')
 
 /**
  * AWS clients
@@ -27,6 +26,18 @@ const worker = async ({ html, fileName, expires }) => {
 	let browser = null
 	let pdf = null
 
+	// Send start generating event
+	await eventBridge.putEvents({
+		Entries: [{
+			EventBusName: process.env.EVENT_BUS_NAME,
+			Source: process.env.EVENT_SOURCE_NAME,
+			DetailType: 'PDF Generation Start',
+			Detail: JSON.stringify({
+				fileName
+			})
+		}]
+	}).promise()
+
 	// Generate PDF
 	try {
 		browser = await chromium.puppeteer.launch({
@@ -48,6 +59,20 @@ const worker = async ({ html, fileName, expires }) => {
 		
 	} catch (err) {
 		console.error(err)
+
+		// Send generating error event
+		await eventBridge.putEvents({
+			Entries: [{
+				EventBusName: process.env.EVENT_BUS_NAME,
+				Source: process.env.EVENT_SOURCE_NAME,
+				DetailType: 'PDF Generation Error',
+				Detail: JSON.stringify({
+					fileName,
+					error: `${err}`
+				})
+			}]
+		}).promise()
+
 		throw err
 	} finally {
 		if (browser !== null) {
@@ -62,10 +87,9 @@ const worker = async ({ html, fileName, expires }) => {
 	}
 
 	// Upload PDF file
-	const objectKey = `${uuid()}/${fileName}`
 	await s3.upload({
 		Bucket: process.env.BUCKET_NAME,
-		Key: objectKey,
+		Key: fileName,
 		Body: pdf,
 		ContentType: 'application/pdf',
 	}).promise()
@@ -73,7 +97,7 @@ const worker = async ({ html, fileName, expires }) => {
 	// Generate a download link
 	const downloadLink = s3.getSignedUrl('getObject', {
 		Bucket: process.env.BUCKET_NAME,
-		Key: objectKey,
+		Key: fileName,
 		Expires: expires || process.env.DOWNLOAD_LINK_EXPIRES || 900 // 15 minutes
 	})
 
@@ -82,11 +106,11 @@ const worker = async ({ html, fileName, expires }) => {
 		Entries: [{
 			EventBusName: process.env.EVENT_BUS_NAME,
 			Source: process.env.EVENT_SOURCE_NAME,
-			DetailType: 'pdf/generated',
+			DetailType: 'PDF Generation Succeeded',
 			Detail: JSON.stringify({
-				path: `s3://${process.env.BUCKET_NAME}/${objectKey}`,
-				name: fileName,
-				url: downloadLink
+				fileName: fileName,
+				bucketPath: `s3://${process.env.BUCKET_NAME}/${fileName}`,
+				downloadLink: downloadLink
 			})
 		}]
 	}).promise()

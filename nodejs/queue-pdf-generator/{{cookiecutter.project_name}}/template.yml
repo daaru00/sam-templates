@@ -28,10 +28,6 @@ Parameters:
     Type: Number
     Description: "The number of queue message processed in parallels"
     Default: {{cookiecutter.batch_size}}
-  EventBusName:
-    Type: String
-    Description: "The event bus name where event are sent to"
-    Default: "{{cookiecutter.event_bus}}"
   PdfFileExpiration:
     Type: Number
     Description: "The number of day after PDF file will be deleted"
@@ -44,6 +40,44 @@ Parameters:
 # Template Resources
 
 Resources:
+
+  EventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !Sub "${AWS::StackName}"
+
+  EventBridgeSQSPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref GeneratePdfQueue
+      PolicyDocument:
+        Statement:
+        - Action:
+            - SQS:SendMessage
+          Effect: Allow
+          Principal:
+            Service:
+              - events.amazonaws.com
+          Resource:
+            - !GetAtt GeneratePdfQueue.Arn
+
+  PdfGenerateEventListener:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: !Sub "${AWS::StackName}-rule-pdf-generate"
+      EventBusName: !Ref EventBus
+      EventPattern:
+        detail-type: 
+          - 'Generate PDF'
+        detail:
+          html:
+            - exists: true
+          fileName:
+            - exists: true
+      Targets:
+        - Id: !Sub "${AWS::StackName}-queue-product-save"
+          Arn: !GetAtt ProductSaveQueue.Arn
 
   Queue:
     Type: AWS::SQS::Queue
@@ -85,7 +119,7 @@ Resources:
       Handler: queue/generate.handler
       Environment:
         Variables:
-          EVENT_BUS_NAME: !Ref EventBusName
+          EVENT_BUS_NAME: !Ref EventBus
           EVENT_SOURCE_NAME: !Ref AWS::StackName
           BUCKET_NAME: !Ref Bucket
           DOWNLOAD_LINK_EXPIRES: !Ref PdfFileDownloadLinkExpiration
@@ -93,7 +127,7 @@ Resources:
       Timeout: {{cookiecutter.timeout}}
       Policies:
         - EventBridgePutEventsPolicy:
-            EventBusName: !Ref EventBusName
+            EventBusName: !Ref EventBus
         - Statement:
           - Effect: Allow
             Action:
@@ -117,6 +151,9 @@ Resources:
 # Template Outputs
 
 Outputs:
+  EventBusName:
+    Description: "The event bus to send and receive events"
+    Value: !Ref EventBus
   QueueName:
     Description: "The queue name"
     Value: !GetAtt Queue.QueueName

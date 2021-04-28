@@ -25,7 +25,10 @@ Resources:
       DefinitionUri: states/workflow.asl.json
       DefinitionSubstitutions:
         MyParameter: "Hello world!"
-  
+      Policies: 
+        # it is mandatory to add at least one policy
+        - LambdaInvokePolicy:
+            FunctionName: "my-function"
 
 # Template Outputs
 

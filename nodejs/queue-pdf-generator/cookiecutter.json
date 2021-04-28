@@ -8,8 +8,7 @@
   "default_profile": "personal",
   "visibility_timeout": 60,
   "message_retention_period": 1800,
-  "batch_size": 10,
-  "event_bus": "default",
+  "batch_size": 1,
   "pdf_file_expiration": 183,
   "pdf_file_download_link_expiration": 900
 }

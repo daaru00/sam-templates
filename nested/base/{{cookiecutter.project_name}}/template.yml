@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  GlobalParameter:
+    Type: String
+    Description: "Example of global parameter"
+    Default: "foo"
+
+# Template Resources
+
+Resources:
+
+  api:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: services/api/template.yml
+      Parameters:
+        GlobalParameter: !Ref GlobalParameter
+
+  auth:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: services/auth/template.yml
+      Parameters:
+        GlobalParameter: !Ref GlobalParameter
+        ServiceParameter: "bar"
+
+# Template Outputs
+
+Outputs:
+  ServiceOutput:
+    Description: "The StepFunction ARN"
+    Value: !GetAtt api.Outputs.ExampleOutput

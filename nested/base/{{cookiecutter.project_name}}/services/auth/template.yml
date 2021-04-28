@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Parameters
+
+Parameters:
+  GlobalParameter:
+    Type: String
+    Description: "Global parameter"
+  ServiceParameter:
+    Type: String
+    Description: "Service parameter"
+
+# Template Resources
+
+Resources:
