@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+  - AWS::Serverless-2016-10-31
+
+# Template Information
+
+Description: "{{cookiecutter.project_description}}"
+
+# Template Parameters
+
+Parameters:
+  DefaultName:
+    Type: String
+    Description: "The default name to say hello to"
+    Default: "World"
+
+# Global function defaults
+
+Globals:
+  Function:
+    Timeout: {{cookiecutter.timeout}}
+    CodeUri: ./
+    Runtime: provided.al2
+    Layers:
+      # Bref PHP 7.4 runtime layer: https://bref.sh/docs/runtimes/
+      - !Sub "arn:aws:lambda:${AWS::Region}:209497400698:layer:{{cookiecutter.runtime}}:18"
+
+# Template Resources
+
+Resources:
+
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Ref AWS::StackName
+      StageName: api
+      Auth:
+        ApiKeyRequired: true
+        UsagePlan:
+          CreateUsagePlan: PER_API
+          UsagePlanName: !Ref AWS::StackName
+      DefinitionBody:
+        Fn::Transform:
+          Name: "AWS::Include"
+          Parameters:
+            Location: "resources/api.yaml"
+
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-hello"
+      Handler: src/hello.php
+      Environment:
+        Variables:
+          DEFAULT_NAME: !Ref DefaultName
+      Events:
+        ReceiveRequest:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: RestApi
+            Method: GET
+            Path: /hello
+
+# Template Outputs
+
+Outputs:
+  ApiEndpoint:
+    Description: "The API endpoint URL"
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/api/"
+
+

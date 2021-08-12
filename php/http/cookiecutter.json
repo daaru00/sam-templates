@@ -1,0 +1,8 @@
+{
+  "project_name": "my-app",
+  "project_description": "My Serverless application description",
+  "runtime": "php-74",
+  "timeout": 6,
+  "default_region": "eu-west-1",
+  "default_profile": "personal"
+}

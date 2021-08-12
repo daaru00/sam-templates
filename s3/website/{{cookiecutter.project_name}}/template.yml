@@ -9,6 +9,9 @@ Description: "{{cookiecutter.project_description}}"
 # Template Parameters
 
 Parameters:
+  WebSiteHostname:
+    Type: String
+    Description: "The hostname of website"
   IndexDocument:
     Type: String
     Description: "The index document"
@@ -33,11 +36,11 @@ Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::StackName}"
+      BucketName: !Ref WebSiteHostname
       AccessControl: "PublicRead"
       WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
+        IndexDocument: !Ref IndexDocument
+        ErrorDocument: !Ref ErrorDocument
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -59,13 +62,13 @@ Resources:
       DistributionConfig:
         Origins:
         - DomainName: 
-            !Sub "${Bucket}.s3-website-${AWS::Region}.amazonaws.com"
+            !Sub "${Bucket}.s3-website.${AWS::Region}.amazonaws.com"
           Id: websiteOrigin
           CustomOriginConfig: 
             OriginProtocolPolicy: "http-only"
         Enabled: 'true'
         Comment: !Ref AWS::StackName
-        DefaultRootObject: index.html
+        DefaultRootObject: !Ref IndexDocument
         DefaultCacheBehavior:
           Compress: 'true'
           AllowedMethods:

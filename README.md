@@ -163,3 +163,13 @@ A base template for nested stacks, more information at [template readme](nested/
 ```bash
 sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/nested.zip
 ```
+
+## PHP
+
+### HTTP API
+
+A PHP project for HTTP API, more information at [template readme](php/http/README.md)
+
+```bash
+sam init --location https://github.com/daaru00/sam-templates/releases/download/v1/php-http.zip
+```

@@ -75,5 +75,9 @@
   {
     "name": "nested",
     "path": "./nested/base"
+  },
+  {
+    "name": "php-http",
+    "path": "./php/http"
   }
 ]

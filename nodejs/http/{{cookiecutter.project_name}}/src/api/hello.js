@@ -5,11 +5,12 @@
  * @param {object} event.queryStringParameters
  */
 exports.handler = async function({ queryStringParameters }) {
-  // Return greetings
+  const name = queryStringParameters && queryStringParameters.name ? queryStringParameters.name : process.env.DEFAULT_NAME
+
   return {
     statusCode: 200,
     body: JSON.stringify({
-      "message": `Hello ${queryStringParameters.name || process.env.DEFAULT_NAME}`
+      message: `Hello ${name}`
     })
   }
 }

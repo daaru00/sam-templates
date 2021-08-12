@@ -1,0 +1,6 @@
+{
+    "name": "sam/{{cookiecutter.project_name}}",
+    "require": {
+        "bref/bref": "^1.2"
+    }
+}
